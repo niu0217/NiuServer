@@ -108,10 +108,12 @@ int epollRun(int listenFd)
       if (fd == listenFd)
       {
         pthread_create(&info->tid, NULL, acceptClient, info);
+        pthread_detach(info->tid);
       }
       else
       {
         pthread_create(&info->tid, NULL, recvHttpRequest, info);
+        pthread_detach(info->tid);
       }
     }
   }
@@ -154,7 +156,7 @@ void* acceptClient(void *arg)
 void* recvHttpRequest(void* arg)
 {
   struct FdInfo* info = (struct FdInfo*)arg;
-  printf("开始接收数据了...\n");
+  printf("开始接收客户端数据了...\n");
   int len = 0;
   int hasReadidx = 0;
   char tmp[1024] = { 0 };
@@ -192,17 +194,18 @@ void* recvHttpRequest(void* arg)
 
 int parseRequestLine(const char* line, int connFd)
 {
-  printf("%s\n", line);
   // 解析请求行 get /xxx/1.jpg http/1.1
   char method[12];
   char path[1024];
   sscanf(line, "%[^ ] %[^ ]", method, path);
+  decodeMsg(path, path); // 解析特殊字符
   printf("method: %s, path: %s\n", method, path);
   if (strcasecmp(method, "get") != 0)  // 不区分大小写进行对比
   {
     // 目前只处理 get 请求
     return -1;
   }
+
   // 处理客户端请求的静态资源（目录或者文件）
   char *file = NULL;
   if (strcmp(path, "/") == 0)
@@ -266,14 +269,18 @@ int sendFile(const char* fileName, int connFd)
   off_t offset = 0;
   int size = lseek(fd, 0, SEEK_END);
   lseek(fd, 0, SEEK_SET);
-  while (offset < size)
+  while (offset < size)  // 用while是为了处理大文件的发送
   {
+    // sendfile的第三个参数：
+    //   发送数据之前 根据该偏移量开始读文件数据
+    //   发送数据之后 更新该偏移量
     int ret = sendfile(connFd, fd, &offset, size - offset);
     printf("ret value: %d\n", ret);
     if (ret == -1 && errno == EAGAIN)
     {
-      printf("没数据...\n");
-      break;
+      printf("客户端正在处理，稍等片刻...\n");
+      usleep(100);  // 客户端可能处理的比较慢，需要等一等
+      continue;
     }
   }
 #endif
@@ -392,4 +399,44 @@ int sendDir(const char* dirName, int connFd)
   send(connFd, buf, strlen(buf), 0);
   free(namelist);
   return 0;
+}
+
+// 将字符转换为整形数
+int hexToDec(char c)
+{
+  if (c >= '0' && c <= '9')
+    return c - '0';
+  if (c >= 'a' && c <= 'f')
+    return c - 'a' + 10;
+  if (c >= 'A' && c <= 'F')
+    return c - 'A' + 10;
+
+  return 0;
+}
+
+// 解码
+// to 存储解码之后的数据, 传出参数, from被解码的数据, 传入参数
+void decodeMsg(char* to, char* from)
+{
+  for (; *from != '\0'; ++to, ++from)
+  {
+    // isxdigit -> 判断字符是不是16进制格式, 取值在 0-f
+    // Linux%E5%86%85%E6%A0%B8.jpg
+    if (from[0] == '%' && isxdigit(from[1]) && isxdigit(from[2]))
+    {
+      // 将16进制的数 -> 十进制 将这个数值赋值给了字符 int -> char
+      // B2 == 178
+      // 将3个字符, 变成了一个字符, 这个字符就是原始数据
+      *to = hexToDec(from[1]) * 16 + hexToDec(from[2]);
+
+      // 跳过 from[1] 和 from[2] 因此在当前循环中已经处理过了
+      from += 2;
+    }
+    else
+    {
+      // 字符拷贝, 赋值
+      *to = *from;
+    }
+  }
+  *to = '\0';
 }
