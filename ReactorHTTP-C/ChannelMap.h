@@ -7,6 +7,7 @@
 
 #pragma once
 #include <stdbool.h>
+#include "Channel.h"
 
 struct ChannelMap
 {
