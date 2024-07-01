@@ -140,7 +140,7 @@ void* acceptClient(void *arg)
   // 3、将已连接的客户描述符上树，添加到epfd中
   struct epoll_event ev;
   ev.data.fd = connFd;
-  ev.events = EPOLLIN | EPOLLET;
+  ev.events = EPOLLIN | EPOLLET;   // 在这里 connFd 已经被设置为 ET + 非阻塞
   int ret = epoll_ctl(info->epfd, EPOLL_CTL_ADD, connFd, &ev);
   if (-1 == ret)
   {
@@ -157,6 +157,7 @@ void* recvHttpRequest(void* arg)
 {
   struct FdInfo* info = (struct FdInfo*)arg;
   printf("开始接收客户端数据了...\n");
+  printf("recvMsg threadId: %ld\n", info->tid);
   int len = 0;
   int hasReadidx = 0;
   char tmp[1024] = { 0 };
@@ -187,7 +188,6 @@ void* recvHttpRequest(void* arg)
   {
     perror("recv");
   }
-  printf("recvMsg threadId: %ld\n\n", info->tid);
   free(info);
   return NULL;
 }
@@ -199,7 +199,7 @@ int parseRequestLine(const char* line, int connFd)
   char path[1024];
   sscanf(line, "%[^ ] %[^ ]", method, path);
   decodeMsg(path, path); // 解析特殊字符
-  printf("method: %s, path: %s\n", method, path);
+  printf("method: %s, path: %s\n\n", method, path);
   if (strcasecmp(method, "get") != 0)  // 不区分大小写进行对比
   {
     // 目前只处理 get 请求
@@ -257,7 +257,7 @@ int sendFile(const char* fileName, int connFd)
     }
     else if (len == 0)
     {
-      // 数据已经读完，可以离开了
+      // 读取文件数据完毕
       break;
     }
     else
@@ -297,7 +297,7 @@ int sendHeadMsg(int connFd, int status, const char* descr, const char* type, int
   sprintf(buf + strlen(buf), "content-type: %s\r\n", type);
   sprintf(buf + strlen(buf), "content-length: %d\r\n\r\n", length);
 
-  send(connFd, buf, strlen(buf), 0);
+  send(connFd, buf, strlen(buf), 0);  // 健壮性判断
   return 0; 
 }
 
