@@ -119,9 +119,11 @@ static int epollDispatch(struct EventLoop* loop, int timeout)
     }
     if (events & EPOLLIN)
     {
+      eventActivate(loop, fd, ReadEvent);
     }
     if (events & EPOLLOUT)
     {
+      eventActivate(loop, fd, WriteEvent);
     }
   }
   return 0;
