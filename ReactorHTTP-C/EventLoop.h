@@ -33,7 +33,7 @@ struct EventLoop
   // dispatcher 可以指向 EpollDispatcher 或者 PollDispatcher
   // 或者 SelectDispatcher，而这三个当中的每一个都保存了相应
   // 的函数指针，也就是回调函数的概念。我们在EventLoop中调用
-  // 相应的回调函数处理事件；
+  // 相应的回调函数；
   struct Dispatcher* dispatcher;
   void* dispatcherData;
 
@@ -64,6 +64,9 @@ int eventLoopRun(struct EventLoop* loop);
 int eventActivate(struct EventLoop* loop, int fd, int event);
 
 // 添加任务到任务队列
+// 特别特别注意～～～  任务队列有可能被其他线程调用
+//                  比如 线程1 往 线程2 的任务队列加任务 同时线程2 也会操作任务队列
+//                  因此 访问任务队列必须加锁
 int eventLoopAddTask(struct EventLoop* loop, struct Channel* channel, int type);
 
 // 处理线程间通信

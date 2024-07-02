@@ -58,7 +58,7 @@ struct EventLoop* eventLoopInitEx(const char* threadName)
   // 指定规则: loop->socketPair[0] 发送数据, loop->socketPair[1] 接收数据
   struct Channel *channel = channelInit(loop->socketPair[1], ReadEvent,
                                        readLocalMessage, NULL, NULL, loop);
-  eventLoopAddTask(loop, channel, ADD);                                     
+  eventLoopAddTask(loop, channel, ADD);
   return loop;
 }
 

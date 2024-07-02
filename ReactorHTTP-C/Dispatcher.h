@@ -10,6 +10,7 @@
 #include "EventLoop.h"
 
 // 一个 Dispatcher 属于一个 EventLoop
+// 用于保存回调函数
 struct Dispatcher
 {
   // init
