@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// size 初始为128；不够调用 makeMapRoom 扩容
 struct ChannelMap* channelMapInit(int size)
 {
   struct ChannelMap *map = (struct ChannelMap*)
@@ -36,6 +37,7 @@ void channelMapClear(struct ChannelMap *map)
     map->list = NULL;
   }
   map->size = 0;
+  // Question map申请的内存在哪释放？
 }
 
 bool makeMapRoom(struct ChannelMap *map, int newSize, int unitSize)

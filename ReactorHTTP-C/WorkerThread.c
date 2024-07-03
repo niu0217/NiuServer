@@ -41,6 +41,7 @@ void workerThreadRun(struct WorkerThread* thread)
   pthread_mutex_lock(&thread->mutex);
   while (thread->loop == NULL)
   {
+    // thread->loop 没有被初始化好我们就让它一直阻塞在这里
     pthread_cond_wait(&thread->cond, &thread->mutex);
   }
   pthread_mutex_unlock(&thread->mutex);

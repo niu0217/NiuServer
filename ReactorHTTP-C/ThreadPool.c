@@ -53,6 +53,7 @@ struct EventLoop* takeWorkerEventLoop(struct ThreadPool* pool)
   struct EventLoop *loop = pool->mainLoop;
   if (pool->threadNum > 0)
   {
+    // 采用轮叫的方式选择
     loop = pool->workerThreads[pool->index].loop;  // 这个是子线程的 loop
     ++pool->index;
     pool->index = pool->index % pool->threadNum;

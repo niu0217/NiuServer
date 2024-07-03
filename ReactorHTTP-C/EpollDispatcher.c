@@ -104,6 +104,7 @@ static int epollModify(struct Channel* channel, struct EventLoop* loop)
   return ret;
 }
 
+// 核心 事件循环
 static int epollDispatch(struct EventLoop* loop, int timeout)
 {
   struct EpollData *data = (struct EpollData*)loop->dispatcherData;

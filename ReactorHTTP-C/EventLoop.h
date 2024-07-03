@@ -37,11 +37,11 @@ struct EventLoop
   struct Dispatcher* dispatcher;
   void* dispatcherData;
 
-  // 任务队列
+  // 任务队列的头节点和尾节点
   struct ChannelElement *head;
   struct ChannelElement *tail;
 
-  // map
+  // map 保存 fd 和 channel 的映射关系
   struct ChannelMap* channelMap;
 
   // 线程相关 id name mutex

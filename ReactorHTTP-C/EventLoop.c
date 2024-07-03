@@ -34,6 +34,7 @@ struct EventLoop* eventLoopInit()
   return eventLoopInitEx(NULL);
 }
 
+// eventLoopInitEx 只会在子线程中被调用
 struct EventLoop* eventLoopInitEx(const char* threadName)
 {
   struct EventLoop *loop = (struct EventLoop*)malloc(sizeof(struct EventLoop));
@@ -72,8 +73,8 @@ int eventLoopRun(struct EventLoop* loop)
   struct Dispatcher *dispatcher = loop->dispatcher;
   while (!loop->isQuit)
   {
-    dispatcher->dispatch(loop, 2);
-    eventLoopProcessTask(loop);
+    dispatcher->dispatch(loop, 2);  // 最终调用 epollDispatch
+    eventLoopProcessTask(loop);     // 处理任务队列中的任务
   }
   return 0;
 }
@@ -97,6 +98,13 @@ int eventActivate(struct EventLoop* loop, int fd, int event)
   return 0;
 }
 
+// 为什么访问任务队列（节点ChannelElement） 需要加锁?
+//   原因：主线程可以调用 eventLoopAddTask(subloop, channel, type)向subloop（子线程）的
+//        任务队列中添加元素；而此时如果子线程正在操作任务队列，那么就会出错；
+//
+// 参数解释：
+//   loop -- 有可能是子线程的，也有可能是主线程的
+//   channel -- 之前已经调用过 channelInit；也就是它其中的fd、回调函数、事件都被初始化好了
 int eventLoopAddTask(struct EventLoop* loop, struct Channel* channel, int type)
 {
   pthread_mutex_lock(&loop->mutex);
@@ -118,7 +126,6 @@ int eventLoopAddTask(struct EventLoop* loop, struct Channel* channel, int type)
 
   if (loop->threadID == pthread_self())
   {
-    // 当前线程 基于子线程的角度分析
     eventLoopProcessTask(loop);
   }
   else
