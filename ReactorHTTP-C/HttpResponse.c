@@ -21,7 +21,7 @@ struct HttpResponse* httpResponseInit()
   response->headerNum = 0;
   int size = sizeof(struct ResponseHeader) * ResHeaderSize;
   response->headers = (struct ResponseHeader*)malloc(size);
-  
+
   response->statusCode = Unknown;
   // 初始化数组
   bzero(response->headers, size);
@@ -39,6 +39,8 @@ void httpResponseDestroy(struct HttpResponse* response)
   {
     free(response->headers);
     free(response);
+    response->headers = NULL;
+    response = NULL;
   }
 }
 

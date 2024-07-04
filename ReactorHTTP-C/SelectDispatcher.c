@@ -85,6 +85,8 @@ static int selectRemove(struct Channel* channel, struct EventLoop* loop)
 {
   struct SelectData* data = (struct SelectData*)loop->dispatcherData;
   clearFdSet(channel, data);
+  // 通过 channel 释放对应的 TcpConnection 资源
+  channel->destroyCallback(channel->arg);
   return 0;
 }
 

@@ -23,7 +23,7 @@ struct Channel
   int events;
   EventCallback readCallback;
   EventCallback writeCallback;
-  EventCallback destoryCallback;
+  EventCallback destroyCallback;
   void *arg;
 };
 
@@ -31,7 +31,7 @@ struct Channel
 struct Channel* channelInit(int fd, int events, 
                             EventCallback readCb, 
                             EventCallback writeCb, 
-                            EventCallback destoryCb,
+                            EventCallback destroyCb,
                             void *arg);
 // 修改fd的写事件（检测或者不检测）
 void writeEventEnable(struct Channel* channel, bool flag);

@@ -19,7 +19,7 @@
 
 struct TcpConnection
 {
-  struct EventLoop* loop;
+  struct EventLoop* loop;   // 不需要 TcpConnection 管理它的生命周期
   struct Channel* channel;
   struct Buffer* readBuf;
   struct Buffer* writeBuf;

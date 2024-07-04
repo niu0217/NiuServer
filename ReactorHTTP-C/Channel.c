@@ -10,7 +10,7 @@
 struct Channel* channelInit(int fd, int events, 
                             EventCallback readCb, 
                             EventCallback writeCb, 
-                            EventCallback destoryCb,
+                            EventCallback destroyCb,
                             void *arg)
 {
   struct Channel *channel = (struct Channel*)malloc(sizeof(struct Channel));
@@ -18,7 +18,7 @@ struct Channel* channelInit(int fd, int events,
   channel->events = events;
   channel->readCallback = readCb;
   channel->writeCallback = writeCb;
-  channel->destoryCallback = destoryCb;
+  channel->destroyCallback = destroyCb;
   channel->arg = arg;
   return channel;
 }

@@ -36,9 +36,11 @@ void bufferDestroy(struct Buffer *buf)
     if (buf->data != NULL)
     {
       free(buf->data);
+      buf->data = NULL;
     }
   }
   free(buf);
+  buf = NULL;
 }
 
 void bufferExtendRoom(struct Buffer *buffer, int size)

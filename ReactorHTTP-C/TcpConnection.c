@@ -72,6 +72,21 @@ int processWrite(void *arg)
 
 int tcpConnectionDestroy(void *arg)
 {
+  struct TcpConnection* conn = (struct TcpConnection*)arg;
+  if (conn != NULL)
+  {
+    if (conn->readBuf && bufferReadableSize(conn->readBuf) == 0 &&
+        conn->writeBuf && bufferReadableSize(conn->writeBuf) == 0)
+    {
+      destroyChannel(conn->loop, conn->channel);
+      bufferDestroy(conn->readBuf);
+      bufferDestroy(conn->writeBuf);
+      httpRequestDestroy(conn->request);
+      httpResponseDestroy(conn->response);
+      free(conn);
+    }
+  }
+  return 0;
 }
 
 // 特别注意：这个loop来自于线程池中的一个，也就是属于子线程的loop
