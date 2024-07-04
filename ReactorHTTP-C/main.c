@@ -12,9 +12,9 @@
 
 int main()
 {
-  unsigned short port = 10000;  
+  unsigned short port = 10000;
   chdir("../Sources/");
-  
+
   // 启动服务器
   struct TcpServer* server = tcpServerInit(port, 4);
   tcpServerRun(server);
