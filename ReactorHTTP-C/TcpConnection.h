@@ -6,10 +6,15 @@
  ************************************************************************/
 
 #pragma once
+
 #include "EventLoop.h"
 #include "Buffer.h"
 #include "Channel.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 
+// 定义 MSG_SEND_AUTO    --> 代表注册可写事件去给客户发送消息
+// 没有定义 MSG_SEND_AUTO --> 代表不需要注册可写事件去给客户发送消息，我们读一点数据就发送一点数据
 //#define MSG_SEND_AUTO
 
 struct TcpConnection
@@ -20,8 +25,8 @@ struct TcpConnection
   struct Buffer* writeBuf;
   char name[32];
   // http 协议
-  // struct HttpRequest* request;
-  // struct HttpResponse* response;
+  struct HttpRequest* request;
+  struct HttpResponse* response;
 };
 
 // 初始化

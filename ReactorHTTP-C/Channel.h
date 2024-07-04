@@ -34,6 +34,6 @@ struct Channel* channelInit(int fd, int events,
                             EventCallback destoryCb,
                             void *arg);
 // 修改fd的写事件（检测或者不检测）
-void enableWriteEvent(struct Channel* channel, bool flag);
+void writeEventEnable(struct Channel* channel, bool flag);
 // 判断是否需要检测文件描述符的写事件
 bool isEnableWrite(struct Channel *channel);

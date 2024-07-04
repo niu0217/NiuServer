@@ -415,7 +415,6 @@ void sendFile(const char* fileName, struct Buffer* sendBuf, int cfd)
     int len = read(fd, buf, sizeof buf);
     if (len > 0)
     {
-      // send(cfd, buf, len, 0);
       bufferAppendData(sendBuf, buf, len);
 #ifndef MSG_SEND_AUTO
       bufferSendData(sendBuf, cfd);

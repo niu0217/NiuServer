@@ -23,7 +23,7 @@ struct Channel* channelInit(int fd, int events,
   return channel;
 }
 
-void enableWriteEvent(struct Channel* channel, bool flag)
+void writeEventEnable(struct Channel* channel, bool flag)
 {
   if (flag)
   {
