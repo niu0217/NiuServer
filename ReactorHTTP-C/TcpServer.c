@@ -7,9 +7,10 @@
 
 #include "TcpServer.h"
 #include "TcpConnection.h"
+#include "Log.h"
 #include <arpa/inet.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>  // perror
+#include <stdlib.h>  // malloc
 
 struct TcpServer* tcpServerInit(unsigned short port, int threadNum)
 {
@@ -80,6 +81,8 @@ int acceptConnection(void* arg)
 
 void tcpServerRun(struct TcpServer* server)
 {
+  Debug("服务器程序已经启动了...");
+
   threadPoolRun(server->threadPool); // 启动线程池
   // 在这之后程序中就有了 threadNum + 1 个线程存在
   // 也就是 1个主线程 + threadNum个子线程

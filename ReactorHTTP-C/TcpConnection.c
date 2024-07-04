@@ -7,6 +7,7 @@
 
 #include "TcpConnection.h"
 #include "HttpRequest.h"
+#include "Log.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -15,6 +16,9 @@ int processRead(void *arg)
   struct TcpConnection *conn = (struct TcpConnection *)arg;
 
   int count = bufferSocketRead(conn->readBuf, conn->channel->fd);
+
+  Debug("接收到的http请求数据: %s", conn->readBuf->data + conn->readBuf->readPos);
+
   if (count > 0)
   {
     // 接收到了 http 请求, 解析http请求
@@ -43,7 +47,7 @@ int processRead(void *arg)
   }
 #ifndef MSG_SEND_AUTO
   // 断开连接
-  eventLoopAddTask(conn->loop, conn->channel, DELETE);
+  // eventLoopAddTask(conn->loop, conn->channel, DELETE);
 #endif
   return 0;
 }
@@ -111,6 +115,9 @@ struct TcpConnection *tcpConnectionInit(int fd, struct EventLoop *loop)
                               processRead, processWrite, tcpConnectionDestroy,
                               conn);
   eventLoopAddTask(loop, conn->channel, ADD);
+
+  Debug("和客户端建立连接, threadName: %s, threadID:%ld, connName: %s",
+        loop->threadName, loop->threadID, conn->name);
 
   return conn;
 }
