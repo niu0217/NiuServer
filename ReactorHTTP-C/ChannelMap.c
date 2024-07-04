@@ -37,7 +37,6 @@ void channelMapClear(struct ChannelMap *map)
     map->list = NULL;
   }
   map->size = 0;
-  // Question map申请的内存在哪释放？
 }
 
 bool makeMapRoom(struct ChannelMap *map, int newSize, int unitSize)

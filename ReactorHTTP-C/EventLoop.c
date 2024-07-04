@@ -180,7 +180,8 @@ int eventLoopAdd(struct EventLoop* loop, struct Channel* channel)
   }
   if (channelMap->list[fd] == NULL)
   {
-    channelMap->list[fd] = channel;
+    // Question 这里如果free(channelMap->list[fd]) 会有问题吗？
+    channelMap->list[fd] = channel;  
     loop->dispatcher->add(channel, loop);
   }
   return 0;
@@ -194,6 +195,7 @@ int eventLoopRemove(struct EventLoop* loop, struct Channel* channel)
   {
     return -1;
   }
+  // Question 这里需要修改 channelMap 吗
   int ret = loop->dispatcher->remove(channel, loop);
   return ret;
 }

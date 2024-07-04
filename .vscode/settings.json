@@ -8,4 +8,7 @@
     "editor.wordWrap": "on",
 
     "C_Cpp.default.cppStandard": "c++14",
+    "files.associations": {
+        "dispatcher.h": "c"
+    },
 }
