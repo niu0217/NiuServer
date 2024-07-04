@@ -98,7 +98,7 @@ static int pollRemove(struct Channel* channel, struct EventLoop* loop)
 
   // 通过 channel 释放对应的 TcpConnection 资源
   channel->destroyCallback(channel->arg);
-  
+
   if (i >= MAX)
   {
     return -1;
@@ -137,7 +137,7 @@ static int pollModify(struct Channel* channel, struct EventLoop* loop)
 static int pollDispatch(struct EventLoop* loop, int timeout)
 {
   struct PollData* data = (struct PollData*)loop->dispatcherData;
-  int count = poll(data->fds, data->maxfd + 1, timeout * 1000);
+  poll(data->fds, data->maxfd + 1, timeout * 1000);
   for (int i = 0; i <= data->maxfd; i++)
   {
     if (data->fds[i].fd == -1)

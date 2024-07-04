@@ -108,7 +108,7 @@ char* httpRequestGetHeader(struct HttpRequest* request, const char* key)
   return NULL;
 }
 
-char* splitRequestLine(const char* start, const char* end, const char* sub, char** ptr)
+char* splitRequestLine(char* start, char* end, char* sub, char** ptr)
 {
   char* space = end;
   if (sub != NULL)

@@ -69,6 +69,7 @@ static int epollCtl(struct Channel* channel, struct EventLoop* loop, int op)
   }
   ev.events = events;
   int ret = epoll_ctl(data->epfd, op, channel->fd, &ev);
+  return ret;
 }
 
 static int epollAdd(struct Channel* channel, struct EventLoop* loop)
@@ -93,7 +94,7 @@ static int epollRemove(struct Channel* channel, struct EventLoop* loop)
 
   // 通过 channel 释放对应的 TcpConnection 资源
   channel->destroyCallback(channel->arg);
-  
+
   return ret;
 }
 

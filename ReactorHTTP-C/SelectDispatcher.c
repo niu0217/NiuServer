@@ -88,7 +88,7 @@ static int selectRemove(struct Channel* channel, struct EventLoop* loop)
 
   // 通过 channel 释放对应的 TcpConnection 资源
   channel->destroyCallback(channel->arg);
-  
+
   return 0;
 }
 
@@ -109,7 +109,7 @@ static int selectDispatch(struct EventLoop* loop, int timeout)
   fd_set rdtmp = data->readSet;
   fd_set wrtmp = data->writeSet;
   // select 的第2、3、4个参数都是传入传出参数
-  int count = select(MAX, &rdtmp, &wrtmp, NULL, &val);
+  select(MAX, &rdtmp, &wrtmp, NULL, &val);
   for (int i = 0; i < MAX; i++)
   {
     if (FD_ISSET(i, &rdtmp))

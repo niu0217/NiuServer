@@ -12,7 +12,7 @@ int workerThreadInit(struct WorkerThread* thread, int index)
 {
   thread->loop = NULL;
   thread->threadID = 0;
-  snprintf(thread->name, "SubThread-%d", index);
+  sprintf(thread->name, "SubThread-%d", index);
   pthread_mutex_init(&thread->mutex, NULL);
   pthread_cond_init(&thread->cond, NULL);
   return 0;
