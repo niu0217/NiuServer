@@ -10,27 +10,26 @@
 #include "Channel.h"
 #include "EventLoop.h"
 #include <string>
-using namespace std;
 
 class EventLoop;
 class Dispatcher
 {
 public:
   Dispatcher(EventLoop* evloop);
-  virtual ~Dispatcher();
+  virtual ~Dispatcher();  // 必须是虚函数 不然父类指针指向子类对象后，内存释放会有问题
 
   virtual int add();
   virtual int remove();
   virtual int modify();
   virtual int dispatch(int timeout = 2); // 单位: s
-  
+
   inline void setChannel(Channel* channel)
   {
     m_channel = channel;
   }
 
 protected:
-  string m_name = string();
+  std::string m_name = std::string();
   Channel* m_channel;
   EventLoop* m_evLoop;
 };
