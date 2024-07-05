@@ -8,6 +8,7 @@
 
 #include "HttpRequest.h"
 #include "TcpConnection.h"
+#include "Log.h"
 #include <stdio.h>
 #include <strings.h>
 #include <string.h>
@@ -42,30 +43,18 @@ void httpRequestReset(struct HttpRequest* req)
 
 void httpRequestResetEx(struct HttpRequest* req)
 {
-  if (req->method)
-    free(req->method);
-  if (req->url)
-    free(req->url);
-  if (req->version)
-    free(req->version);
+  free(req->url);
+  free(req->method);
+  free(req->version);
   
   if (req->reqHeaders != NULL)
   {
     for (int i = 0; i < req->reqHeadersNum; ++i)
     {
-      if (req->reqHeaders[i].key)
-      {
-        free(req->reqHeaders[i].key);
-        req->reqHeaders[i].key = NULL;
-      }
-      if (req->reqHeaders[i].value)
-      {
-        free(req->reqHeaders[i].value);
-        req->reqHeaders[i].value = NULL;
-      }
+      free(req->reqHeaders[i].key);
+      free(req->reqHeaders[i].value);
     }
     free(req->reqHeaders);
-    req->reqHeaders = NULL;
   }
   httpRequestReset(req);
 }

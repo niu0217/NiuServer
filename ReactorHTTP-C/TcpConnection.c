@@ -17,7 +17,7 @@ int processRead(void *arg)
 
   int count = bufferSocketRead(conn->readBuf, conn->channel->fd);
 
-  // Debug("接收到的http请求数据: %s", conn->readBuf->data + conn->readBuf->readPos);
+  Debug("接收到的http请求数据: %s", conn->readBuf->data + conn->readBuf->readPos);
 
   if (count > 0)
   {
@@ -40,8 +40,13 @@ int processRead(void *arg)
   }
   else
   {
+#ifdef MSG_SEND_AUTO
     eventLoopAddTask(conn->loop, conn->channel, DELETE);
+#endif
   }
+#ifndef MSG_SEND_AUTO
+  eventLoopAddTask(conn->loop, conn->channel, DELETE);
+#endif
   return 0;
 }
 

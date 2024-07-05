@@ -15,7 +15,7 @@
 
 // 定义 MSG_SEND_AUTO    --> 代表注册可写事件去给客户发送消息
 // 没有定义 MSG_SEND_AUTO --> 代表不需要注册可写事件去给客户发送消息，我们读一点数据就发送一点数据
-//#define MSG_SEND_AUTO
+#define MSG_SEND_AUTO
 
 struct TcpConnection
 {
