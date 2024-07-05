@@ -81,11 +81,11 @@ int EpollDispatcher::dispatch(int timeout)
     }
     if (events & EPOLLIN)
     {
-      // m_evLoop->eventActive(fd, (int)FDEvent::ReadEvent);
+      m_evLoop->eventActive(fd, (int)FDEvent::ReadEvent);
     }
     if (events & EPOLLOUT)
     {
-      // m_evLoop->eventActive(fd, (int)FDEvent::WriteEvent);
+      m_evLoop->eventActive(fd, (int)FDEvent::WriteEvent);
     }
   }
   return 0;

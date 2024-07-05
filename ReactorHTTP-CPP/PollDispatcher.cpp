@@ -128,11 +128,11 @@ int PollDispatcher::dispatch(int timeout)
     }
     if (m_fds[i].revents & POLLIN)
     {
-      // m_evLoop->eventActive(m_fds[i].fd, (int)FDEvent::ReadEvent);
+      m_evLoop->eventActive(m_fds[i].fd, (int)FDEvent::ReadEvent);
     }
     if (m_fds[i].revents & POLLOUT)
     {
-      // m_evLoop->eventActive(m_fds[i].fd, (int)FDEvent::WriteEvent);
+      m_evLoop->eventActive(m_fds[i].fd, (int)FDEvent::WriteEvent);
     }
   }
   return 0;
