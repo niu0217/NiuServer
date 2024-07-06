@@ -16,14 +16,14 @@ public:
   Buffer(int size);
   ~Buffer();
 
-  void extendRoom(int size);  // 扩容  
+  void extendRoom(int size);  // 扩容
   inline int writeableSize()  // 得到剩余的可写的内存容量
   {
-      return m_capacity - m_writePos;
+    return m_capacity - m_writePos;
   }
   inline int readableSize()  // 得到剩余的可读的内存容量
   {
-      return m_writePos - m_readPos;
+    return m_writePos - m_readPos;
   }
 
   int appendString(const char* data, int size);
@@ -36,16 +36,17 @@ public:
 
   inline char* data()  // 得到读数据的起始位置
   {
-      return m_data + m_readPos;
+    return m_data + m_readPos;
   }
   inline int readPosIncrease(int count)
   {
-      m_readPos += count;
-      return m_readPos;
+    m_readPos += count;
+    return m_readPos;
   }
+
 private:
-  char* m_data;
   int m_capacity;
+  char* m_data;
   int m_readPos = 0;
   int m_writePos = 0;
 };
