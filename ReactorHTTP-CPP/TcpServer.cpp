@@ -40,7 +40,7 @@ int TcpServer::setListen()
   if (listenFd == -1)
   {
     perror("socket");
-    return;
+    return -1;
   }
   // 2. 设置端口复用
   int opt = 1;
@@ -48,7 +48,7 @@ int TcpServer::setListen()
   if (ret == -1)
   {
     perror("setsockopt");
-    return;
+    return -1;
   }
   // 3. 绑定
   struct sockaddr_in addr;
@@ -59,14 +59,14 @@ int TcpServer::setListen()
   if (ret == -1)
   {
     perror("bind");
-    return ;
+    return -1;
   }
   // 4. 设置监听
   ret = listen(listenFd, 128);
   if (ret == -1)
   {
     perror("listen");
-    return ;
+    return -1;
   }
   return listenFd;
 }
