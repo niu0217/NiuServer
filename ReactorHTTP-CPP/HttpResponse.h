@@ -37,11 +37,11 @@ public:
   
   inline void setFileName(string name)
   {
-      m_fileName = name;
+    m_fileName = name;
   }
   inline void setStatusCode(StatusCode code)
   {
-      m_statusCode = code;
+    m_statusCode = code;
   }
 
 private:

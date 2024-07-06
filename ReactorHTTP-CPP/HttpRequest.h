@@ -36,15 +36,14 @@ public:
   bool parseRequestHeader(Buffer* readBuf);  // 解析请求头
 
   // 解析http请求协议
-  bool parseHttpRequest(Buffer* readBuf,
-                        HttpResponse* response, 
-                        Buffer* sendBuf,
+  bool parseHttpRequest(Buffer* readBuf,         // 需要解析的Http请求消息
+                        HttpResponse* response,  
+                        Buffer* sendBuf,         // 需要发送给客户端的响应消息
                         int socket);
   // 处理http请求协议
   bool processHttpRequest(HttpResponse* response);
 
-  // 解码字符串
-  string decodeMsg(string from);
+  string decodeMsg(string from);  // 解码字符串 针对GET请求中的特殊字符进行处理
   const string getFileType(const string name);
   static void sendDir(string dirName, Buffer* sendBuf, int cfd);
   static void sendFile(string dirName, Buffer* sendBuf, int cfd);
@@ -61,6 +60,7 @@ public:
   {
     m_version = version;
   }
+  
   // 获取处理状态
   inline PrecessState getState()
   {

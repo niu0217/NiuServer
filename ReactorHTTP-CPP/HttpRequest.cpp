@@ -6,7 +6,6 @@
  ************************************************************************/
 
 #include "HttpRequest.h"
-// #include "TcpConnection.h"
 #include <stdio.h>
 #include <strings.h>
 #include <string.h>
@@ -82,6 +81,7 @@ string HttpRequest::getHeader(const string key)
   return item->second;
 }
 
+// 参数 readBuf 保存了HTTP的请求信息
 bool HttpRequest::parseRequestLine(Buffer* readBuf)
 {
   char* end = readBuf->findCRLF();  // 读出请求行, 保存字符串结束地址
@@ -92,13 +92,15 @@ bool HttpRequest::parseRequestLine(Buffer* readBuf)
   {
     auto methodFunc = bind(&HttpRequest::setMethod, this, placeholders::_1);
     start = splitRequestLine(start, end, " ", methodFunc);
+
     auto urlFunc = bind(&HttpRequest::setUrl, this, placeholders::_1);
     start = splitRequestLine(start, end, " ", urlFunc);
+
     auto versionFunc = bind(&HttpRequest::setVersion, this, placeholders::_1);
     splitRequestLine(start, end, nullptr, versionFunc);
 
-    readBuf->readPosIncrease(lineSize + 2);   // 为解析请求头做准备 
-    setState(PrecessState::ParseReqHeaders);  // 修改状态
+    readBuf->readPosIncrease(lineSize + 2);      // 为解析请求头做准备 
+    m_curState = PrecessState::ParseReqHeaders;  // 修改状态
     return true;
   }
   return false;
@@ -111,7 +113,7 @@ bool HttpRequest::parseRequestHeader(Buffer* readBuf)
   {
     char* start = readBuf->data();
     int lineSize = end - start;
-    // 基于: 搜索字符串
+    // 可以使用 strstr 但是 它遇到 \0就结束搜索了，因此它只适用于C风格的字符串
     char* middle = static_cast<char*>(memmem(start, lineSize, ": ", 2));
     if (middle != nullptr)
     {
@@ -127,15 +129,16 @@ bool HttpRequest::parseRequestHeader(Buffer* readBuf)
       readBuf->readPosIncrease(lineSize + 2);
     }
     else
-    {      
+    {
       readBuf->readPosIncrease(2);  // 请求头被解析完了, 跳过空行
-      setState(PrecessState::ParseReqDone);
+      m_curState = PrecessState::ParseReqDone; // 这里没有考虑body
     }
     return true;
   }
   return false;
 }
 
+// 解析客户端的Http请求
 bool HttpRequest::parseHttpRequest(Buffer* readBuf,
                                    HttpResponse* response,
                                    Buffer* sendBuf,
@@ -161,26 +164,26 @@ bool HttpRequest::parseHttpRequest(Buffer* readBuf,
     {
       return flag;
     }
-    // 判断是否解析完毕了, 如果完毕了, 需要准备回复的数据
     if (m_curState == PrecessState::ParseReqDone)
     {
-      // 1. 根据解析出的原始数据, 对客户端的请求做出处理
-      processHttpRequest(response);
-      // 2. 组织响应数据并发送给客户端
-      response->prepareMsg(sendBuf, socket);
+      processHttpRequest(response);  // 1. 根据解析出的原始数据, 对客户端的请求做出处理
+      response->prepareMsg(sendBuf, socket);  // 2. 组织响应数据并发送给客户端
     }
   }
   m_curState = PrecessState::ParseReqLine;   // 状态还原, 保证还能继续处理第二条及以后的请求
   return flag;
 }
 
+// 解析完客户端的Http请求之后，执行该函数处理Http请求
 bool HttpRequest::processHttpRequest(HttpResponse* response)
 {
   if (strcasecmp(m_method.data(), "get") != 0)
   {
     return -1;
   }
-  m_url = decodeMsg(m_url);
+  
+  m_url = decodeMsg(m_url);  // 对url中的特殊字符进行处理
+
   // 处理客户端请求的静态资源(目录或者文件)
   const char* file = NULL;
   if (strcmp(m_url.data(), "/") == 0)
