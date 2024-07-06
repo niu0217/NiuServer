@@ -75,8 +75,6 @@ void TcpServer::run()
 {
   Debug("服务器程序已经启动了...");
   m_threadPool->run();  // 启动线程池
-  // 添加检测的任务
-  // 初始化一个channel实例
   Channel* channel = new Channel(m_lfd, FDEvent::ReadEvent, 
                                  acceptConnection, nullptr, nullptr, 
                                  this);
