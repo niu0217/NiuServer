@@ -16,11 +16,12 @@
 using namespace std;
 
 // 处理该节点中的channel的方式
+// 强类型枚举
 enum class ElemType:char{ADD, DELETE, MODIFY};
 // 定义任务队列的节点
 struct ChannelElement
 {
-  ElemType type;   // 如何处理该节点中的channel
+  ElemType type;
   Channel* channel;
 };
 
@@ -33,18 +34,18 @@ public:
   ~EventLoop();
 
   int run();  // 启动反应堆模型
-  int eventActive(int fd, int event);  // 处理别激活的文件fd
+  int eventActive(int fd, int event);  // 调用注册在fd上的回调函数
+
   int addTask(struct Channel* channel, ElemType type); // 添加任务到任务队列
   int processTaskQ();  // 处理任务队列中的任务
-
-  // 处理dispatcher中的节点
   int add(Channel* channel);
   int remove(Channel* channel);
   int modify(Channel* channel);
 
-  // 释放channel
-  int freeChannel(Channel* channel);
+  int freeChannel(Channel* channel);  // 释放channel
+
   int readMessage();
+  static int readLocalMessage(void* arg);
 
   inline thread::id getThreadID()
   {
@@ -54,7 +55,6 @@ public:
   {
     return m_threadName;
   }
-  static int readLocalMessage(void* arg);
 
 private:
     void taskWakeup();
