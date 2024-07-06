@@ -6,11 +6,11 @@
  ************************************************************************/
 
 #include "TcpServer.h"
-// #include "TcpConnection.h"
+#include "TcpConnection.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include "Log.h"
+#include "Log.h"
 
 int TcpServer::acceptConnection(void* arg)
 {
@@ -19,7 +19,7 @@ int TcpServer::acceptConnection(void* arg)
   // 从线程池中取出一个子线程的反应堆实例, 去处理这个cfd
   EventLoop* evLoop = server->m_threadPool->takeWorkerEventLoop();
   // 将cfd放到 TcpConnection中处理
-  // new TcpConnection(cfd, evLoop);
+  new TcpConnection(cfd, evLoop);
   return 0;
 }
 
@@ -73,7 +73,7 @@ int TcpServer::setListen()
 
 void TcpServer::run()
 {
-  // Debug("服务器程序已经启动了...");
+  Debug("服务器程序已经启动了...");
   m_threadPool->run();  // 启动线程池
   // 添加检测的任务
   // 初始化一个channel实例
