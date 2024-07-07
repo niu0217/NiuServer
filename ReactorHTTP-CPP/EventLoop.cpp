@@ -161,6 +161,7 @@ int EventLoop::remove(Channel* channel)
   {
     return -1;
   }
+  // TODO 删除fd和channel的映射关系
   m_dispatcher->setChannel(channel);
   int ret = m_dispatcher->remove();
   return ret;

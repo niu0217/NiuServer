@@ -95,7 +95,7 @@ TcpConnection::TcpConnection(int fd, EventLoop* evloop)
   m_channel = new Channel(fd, FDEvent::ReadEvent,
                           processRead, processWrite, destroy, 
                           this);
-  m_evLoop->addTask(m_channel, ElemType::ADD);
+  m_evLoop->addTask(m_channel, ElemType::ADD);  // 主线程向子线程的任务队列中添加任务
 }
 
 TcpConnection::~TcpConnection()

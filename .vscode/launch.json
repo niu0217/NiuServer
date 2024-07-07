@@ -5,13 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(gdb) c_server",
+      "name": "(gdb) server",
       "type": "cppdbg",
       "request": "launch",
-      "program": "/home/ubuntu/GithubFile/NiuServer/ReactorHTTP-C/test_pressure/webbench-1.5/webbench",
-      "args": ["-c", "2", "-t", "2", "http://127.0.0.1:10000/"],
+      "program": "/home/ubuntu/GithubFile/NiuServer/ReactorHTTP-CPP/server",
+      "args": [],
       "stopAtEntry": false,
-      "cwd": "/home/ubuntu/GithubFile/NiuServer/ReactorHTTP-C/test_pressure/webbench-1.5/",
+      "cwd": "/home/ubuntu/GithubFile/NiuServer/ReactorHTTP-CPP/",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",

@@ -14,7 +14,7 @@ void WorkerThread::running()
   m_mutex.lock();
   m_evLoop = new EventLoop(m_name);
   m_mutex.unlock();
-  m_cond.notify_one();
+  m_cond.notify_one();  // 唤醒主线程
   m_evLoop->run();
 }
 
@@ -38,10 +38,9 @@ void WorkerThread::run()
 {
   // 创建子线程
   m_thread = new thread(&WorkerThread::running, this);
-  // 阻塞主线程, 让当前函数不会直接结束
   unique_lock<mutex> locker(m_mutex);
   while (m_evLoop == nullptr)
   {
-    m_cond.wait(locker);
+    m_cond.wait(locker);  // 阻塞主线程直到 m_evLoop 被子线程赋值
   }
 }
