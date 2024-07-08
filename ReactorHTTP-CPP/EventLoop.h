@@ -17,7 +17,7 @@ using namespace std;
 
 // 处理该节点中的channel的方式
 // 强类型枚举
-enum class ElemType:char{ADD, DELETE, MODIFY};
+enum class ElemType:char{ ADD, DELETE, MODIFY };
 // 定义任务队列的节点
 struct ChannelElement
 {
@@ -29,8 +29,8 @@ class Dispatcher;
 class EventLoop
 {
 public:
-  EventLoop();
-  EventLoop(const string threadName);
+  EventLoop();   // 主线程调用
+  EventLoop(const string threadName); // 子线程调用
   ~EventLoop();
 
   int run();  // 启动反应堆模型
@@ -57,12 +57,12 @@ public:
   }
 
 private:
-    void taskWakeup();
+  void taskWakeup();
 
 private:
   bool m_isQuit;
-  Dispatcher* m_dispatcher;  // 该指针指向子类的实例 epoll, poll, select
-  queue<ChannelElement*> m_taskQ;  // 任务队列
+  Dispatcher* m_dispatcher;         // 该指针指向子类的实例 epoll, poll, select
+  queue<ChannelElement*> m_taskQ;   // 任务队列
   map<int, Channel*> m_channelMap;  // 保存fd和Channel的关系
   thread::id m_threadID;
   string m_threadName;

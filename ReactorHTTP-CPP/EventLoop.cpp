@@ -179,14 +179,6 @@ int EventLoop::modify(Channel* channel)
   return ret;
 }
 
-int EventLoop::readLocalMessage(void* arg)
-{
-  EventLoop* evLoop = static_cast<EventLoop*>(arg);
-  char buf[256];
-  read(evLoop->m_socketPair[1], buf, sizeof(buf));
-  return 0;
-}
-
 void EventLoop::taskWakeup()
 {
   const char* msg = "我是要成为海贼王的男人!!!";
@@ -202,6 +194,14 @@ int EventLoop::freeChannel(Channel* channel)
     close(channel->getSocket());
     delete channel;
   }
+  return 0;
+}
+
+int EventLoop::readLocalMessage(void* arg)
+{
+  EventLoop* evLoop = static_cast<EventLoop*>(arg);
+  char buf[256];
+  read(evLoop->m_socketPair[1], buf, sizeof(buf));
   return 0;
 }
 

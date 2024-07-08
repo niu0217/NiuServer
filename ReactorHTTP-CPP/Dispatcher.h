@@ -30,6 +30,6 @@ public:
 
 protected:
   std::string m_name = std::string();
-  Channel* m_channel;
+  Channel* m_channel;   // 通过setChannel()设置
   EventLoop* m_evLoop;
 };
