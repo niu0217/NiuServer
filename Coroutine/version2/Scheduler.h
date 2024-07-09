@@ -52,8 +52,9 @@ public:
   {
     bool need_tickle = false;
     {
-      MutexType::lock lock(m_mutex);
+      m_mutex.lock();
       need_tickle = scheduleNoLock(fc, thread);
+      m_mutex.unlock();
     }
     if (need_tickle)
     {
@@ -107,9 +108,9 @@ private:
   /// @brief 调度任务，协程/函数二选一，可指定在哪个线程上调度
   struct ScheduleTask
   {
-    Fiber::ptr fiber;
-    std::function<void()> cb;
-    int thread;
+    Fiber::ptr fiber;    // 所属协程
+    std::function<void()> cb; // 协程函数
+    int thread;  // 所属的线程
 
     ScheduleTask(Fiber::ptr f, int thr)
     {
@@ -128,7 +129,7 @@ private:
     }
     ScheduleTask()
     {
-      thread = -1;
+      thread = -1;  // 选择任意线程
     }
     void reset()
     {
