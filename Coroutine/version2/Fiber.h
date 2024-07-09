@@ -68,9 +68,9 @@ public:
 private:
   uint64_t m_id = 0;           // 协程ID
   std::function<void()> m_cb;  // 协程入口函数
+  bool m_runInScheduler;       // 本协程是否参与调度器调度
   uint32_t m_stacksize = 0;    // 协程栈大小 
   State m_state = READY;       // 协程状态
   ucontext_t m_ctx;            // 协程上下文
-  void* m_stack = nullptr;     // 协程栈地址          
-  bool m_runInScheduler;       // 本协程是否参与调度器调度
+  void* m_stack = nullptr;     // 协程栈地址
 };

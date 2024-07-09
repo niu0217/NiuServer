@@ -7,6 +7,7 @@
 
 #include "Fiber.h"
 #include "Log.h"
+#include "Scheduler.h"
 #include <atomic>
 #include <assert.h>
 #include <stdio.h> // perror
@@ -58,7 +59,8 @@ Fiber::Fiber(std::function<void()> cb,
         size_t stacksize,
         bool run_in_scheduler)
   : m_id(s_fiber_id++),
-    m_cb(cb)
+    m_cb(cb),
+    m_runInScheduler(run_in_scheduler)
 {
   ++s_fiber_count;  // 协程个数+1
 
@@ -110,10 +112,21 @@ void Fiber::resume()
   assert(m_state != TERM && m_state != RUNNING);
   SetThis(this);
   m_state = RUNNING;
-  // 执行子协程的函数
-  if (swapcontext(&(t_thread_fiber->m_ctx), &m_ctx))
+  
+  // 如果协程参与调度器调度，那么应该和调度器的主协程进行swap，而不是线程主协程
+  if (m_runInScheduler)
   {
-    perror("swapcontext");
+    if (swapcontext(&(Scheduler::GetMainFiber()->m_ctx), &m_ctx))
+    {
+      perror("swapcontext");
+    }
+  }
+  else
+  {
+    if (swapcontext(&(t_thread_fiber->m_ctx), &m_ctx))
+    {
+      perror("swapcontext");
+    }
   }
 }
 
@@ -128,9 +141,20 @@ void Fiber::yield()
   {
     m_state = READY;
   }
-  if (swapcontext(&m_ctx, &(t_thread_fiber->m_ctx)))
+
+  if (m_runInScheduler)
   {
-    perror("swapcontext");
+    if (swapcontext(&m_ctx, &(Scheduler::GetMainFiber()->m_ctx)))
+    {
+      perror("swapcontext");
+    }
+  }
+  else
+  {
+    if (swapcontext(&m_ctx, &(t_thread_fiber->m_ctx)))
+    {
+      perror("swapcontext");
+    }
   }
 }
 
