@@ -77,8 +77,16 @@ void IOManager::tickle()
 
 bool IOManager::stopping()
 {
-  // 对于IOManager而言，必须等所有待调度的IO事件都执行完了才可以退出
-  return m_pendingEventCount == 0 && Scheduler::stopping();
+  uint64_t timeout = 0;
+  return stopping(timeout);
+}
+
+bool IOManager::stopping(uint64_t& timeout)
+{
+  timeout = getNextTimer();
+  return timeout == ~0ull
+         && m_pendingEventCount == 0
+         && Scheduler::stopping();
 }
 
 void IOManager::idle()
@@ -95,21 +103,44 @@ void IOManager::idle()
 
   while(true)
   {
-    if (stopping())
+    // 获取下一个定时器的超时时间，顺便判断调度器是否停止
+    uint64_t next_timeout = 0;
+    if(SYLAR_UNLIKELY(stopping(next_timeout)))
     {
-      Debug("name = %s idle stopping exit", getName());
+      break;
     }
 
+    // 阻塞在epoll_wait上，等待事件发生或者定时器超时
     int rt = 0;
-    static const int MAX_TIMEOUT = 3000;
-    rt = epoll_wait(m_epfd, events, MAX_EVNETS, MAX_TIMEOUT);
-    if (rt < 0)
+    do
     {
-      if (errno == EINTR)
+      static const int MAX_TIMEOUT = 3000;
+      if(next_timeout != ~0ull)
       {
-        continue;
+        next_timeout = (int)next_timeout > MAX_TIMEOUT
+                        ? MAX_TIMEOUT : next_timeout;
       }
-      break;
+      else
+      {
+        next_timeout = MAX_TIMEOUT;
+      }
+      rt = epoll_wait(m_epfd, events, MAX_EVNETS, (int)next_timeout);
+      if(rt < 0 && errno == EINTR)
+      {
+      }
+      else
+      {
+        break;
+      }
+    } while(true);
+
+    // 收集所有已超时的定时器，执行回调函数
+    std::vector<std::function<void()> > cbs;
+    listExpiredCb(cbs);
+    if(!cbs.empty())
+    {
+      schedule(cbs.begin(), cbs.end());
+      cbs.clear();
     }
 
     // 遍历所有发生的事件，根据epoll_event的私有指针找到对应的FdContext，

@@ -8,8 +8,10 @@
 #pragma once
 
 #include "Scheduler.h"
+#include "Timer.h"
 
-class IOManager : public Scheduler
+class IOManager : public Scheduler,
+                  public TimerManager
 {
 public:
   typedef std::shared_ptr<IOManager> ptr;
@@ -133,18 +135,14 @@ protected:
   void contextResize(size_t size);
 
   /// @brief 判断是否可以停止
+  /// @param timeout 最近要触发的定时器事件间隔
   /// @return 返回是否可以停止
-  bool stopping();
+  bool stopping(uint64_t& timeout);
 
 private:
-  /// epoll 文件句柄
-  int m_epfd = 0;
-  /// pipe 文件句柄
-  int m_tickleFds[2];
-  /// 当前等待执行的事件数量
-  std::atomic<size_t> m_pendingEventCount = {0};
-  /// IOManager的Mutex
-  RWMutexType m_mutex;
-  /// socket事件上下文的容器
-  std::vector<FdContext*> m_fdContexts;
+  int m_epfd = 0;  // epoll 文件句柄
+  int m_tickleFds[2];  // pipe 文件句柄
+  std::atomic<size_t> m_pendingEventCount = {0};  // 当前等待执行的事件数量
+  RWMutexType m_mutex;  // IOManager的Mutex
+  std::vector<FdContext*> m_fdContexts;  // socket事件上下文的容器
 };

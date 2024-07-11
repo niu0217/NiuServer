@@ -62,6 +62,27 @@ public:
     }
   }
 
+  /// @brief 批量调度协程
+  /// @param begin 协程数组的开始
+  /// @param end 协程数组的结束
+  template<class InputIterator>
+  void schedule(InputIterator begin, InputIterator end)
+  {
+    bool need_tickle = false;
+    {
+      MutexType::Lock lock(m_mutex);
+      while(begin != end)
+      {
+        need_tickle = scheduleNoLock(&*begin, -1) || need_tickle;
+        ++begin;
+      }
+    }
+    if(need_tickle)
+    {
+      tickle();
+    }
+  }
+
   /// @brief 启动调度器
   void start();
   
