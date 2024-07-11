@@ -84,7 +84,7 @@ protected:
   /// @brief 设置当前的协程调度器
   void setThis();
 
-  /// @brief 返回是够有空闲线程
+  /// @brief 返回是否有空闲线程
   /// @details 当调度协程进入idle时空闲线程数+1，从idle协程返回时空闲线程数-1
   bool hasIdleThreads()
   {
