@@ -15,7 +15,7 @@ class TcpServer
 public:
   TcpServer(unsigned short port, int threadNum);
 
-  int setListen();
+  int setListen();  // socker bind listen
   void run();
   static int acceptConnection(void* arg);
 

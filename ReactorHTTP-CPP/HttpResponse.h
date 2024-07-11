@@ -32,7 +32,12 @@ public:
   HttpResponse();
   ~HttpResponse();
 
-  void addHeader(const string key, const string value);  // 添加响应头
+  /// @brief 将响应头数据保存到m_headers中
+  void addHeader(const string key, const string value);
+
+  /// @brief 将构造好的Http响应数据保存到sendBuf中，发送给socket对应的客户端
+  /// @param sendBuf 保存构造好的Http响应数据
+  /// @param socket 要发送的客户端的fd
   void prepareMsg(Buffer* sendBuf, int socket);  // 组织http响应数据
   
   inline void setFileName(string name)
@@ -58,3 +63,10 @@ private:
   };
 };
 
+/* 一个简单Http响应的样子
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 26
+
+*/

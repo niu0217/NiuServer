@@ -35,18 +35,34 @@ public:
   bool parseRequestLine(Buffer* readBuf);  // 解析请求行
   bool parseRequestHeader(Buffer* readBuf);  // 解析请求头
 
-  // 解析http请求协议
-  bool parseHttpRequest(Buffer* readBuf,         // 需要解析的Http请求消息
+  /// @brief 解析Http请求消息
+  /// @param readBuf 保存从客户端读取到的Http请求数据
+  /// @param response 构建一个响应数据结构体
+  /// @param sendBuf 保存将要发送给客户端的Http响应数据
+  /// @param socket 客户端的文件描述符
+  bool parseHttpRequest(Buffer* readBuf,
                         HttpResponse* response,  
-                        Buffer* sendBuf,         // 需要发送给客户端的响应消息
+                        Buffer* sendBuf,
                         int socket);
-  // 处理http请求协议
+
+  /// @brief 将Http响应数据保存到response中
+  /// @param response 保存要发送给客户端的Http响应数据
   bool processHttpRequest(HttpResponse* response);
 
-  string decodeMsg(string from);  // 解码字符串 针对GET请求中的特殊字符进行处理
+  string decodeMsg(string from);  // 解码字符串 针对GET请求中m_url的特殊字符进行处理
   const string getFileType(const string name);
+
+  /// @brief 给客户端发送一个html的目录页面
+  /// @param dirName 目录的名字
+  /// @param sendBuf 发送给客户的html的目录页面保存在这里
+  /// @param cfd 要发送的客户端fd
   static void sendDir(string dirName, Buffer* sendBuf, int cfd);
-  static void sendFile(string dirName, Buffer* sendBuf, int cfd);
+
+  /// @brief 将文件内容发送给客户端
+  /// @param fileName 要发送给客户端的文件的名字
+  /// @param sendBuf 保存发送给客户的数据缓冲区
+  /// @param cfd 客户端的fd
+  static void sendFile(string fileName, Buffer* sendBuf, int cfd);
 
   inline void setMethod(string method)
   {
@@ -85,3 +101,12 @@ private:
   map<string, string> m_reqHeaders;
   PrecessState m_curState;
 };
+
+/* 一个简单的Http请求
+
+GET /index.html HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Accept: text/html,application/xhtml+xml
+
+*/

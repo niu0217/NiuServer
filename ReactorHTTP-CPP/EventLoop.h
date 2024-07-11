@@ -42,7 +42,10 @@ public:
   int remove(Channel* channel);
   int modify(Channel* channel);
 
-  int freeChannel(Channel* channel);  // 释放channel
+  /// @brief 删除Channel
+  /// @param channel 要删除的Channel
+  /// @details Channel由EventLoop管理，所以必须由它来删除
+  int freeChannel(Channel* channel);
 
   int readMessage();
   static int readLocalMessage(void* arg);
