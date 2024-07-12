@@ -34,9 +34,14 @@ public:
   ~EventLoop();
 
   int run();  // 启动反应堆模型
-  int eventActive(int fd, int event);  // 调用注册在fd上的回调函数
 
-  int addTask(struct Channel* channel, ElemType type); // 添加任务到任务队列
+  /// @brief 调用注册在fd上的回调函数
+  /// @details 主要是通过fd在m_channelMap中找到其对应的Channel，然后执行Channel上的事件回调函数
+  /// @param fd 发生事件的文件描述符
+  /// @param event 发生的事件
+  int eventActive(int fd, int event);
+
+  int addTask(Channel* channel, ElemType type); // 添加任务到任务队列
   int processTaskQ();  // 处理任务队列中的任务
   int add(Channel* channel);
   int remove(Channel* channel);

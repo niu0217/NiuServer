@@ -28,7 +28,25 @@ EpollDispatcher::EpollDispatcher(EventLoop* evloop)
 EpollDispatcher::~EpollDispatcher()
 {
   close(m_epfd);
-  delete []m_events;
+  delete m_events;
+}
+
+int EpollDispatcher::epollCtl(int op)
+{
+  struct epoll_event ev;
+  ev.data.fd = m_channel->getSocket();
+  int events = 0;
+  if (m_channel->getEvent() & (int)FDEvent::ReadEvent)
+  {
+    events |= EPOLLIN;
+  }
+  if (m_channel->getEvent() & (int)FDEvent::WriteEvent)
+  {
+    events |= EPOLLOUT;
+  }
+  ev.events = events;
+  int ret = epoll_ctl(m_epfd, op, m_channel->getSocket(), &ev);
+  return ret;
 }
 
 int EpollDispatcher::add()
@@ -81,6 +99,8 @@ int EpollDispatcher::dispatch(int timeout)
     }
     if (events & EPOLLIN)
     {
+      // TODO 让Dispatcher管理fd和Channel的映射关系，这样就不用向下面这样
+      //      还要依赖于EventLoop去找到fd对应的Channel
       m_evLoop->eventActive(fd, (int)FDEvent::ReadEvent);
     }
     if (events & EPOLLOUT)
@@ -89,22 +109,4 @@ int EpollDispatcher::dispatch(int timeout)
     }
   }
   return 0;
-}
-
-int EpollDispatcher::epollCtl(int op)
-{
-  struct epoll_event ev;
-  ev.data.fd = m_channel->getSocket();
-  int events = 0;
-  if (m_channel->getEvent() & (int)FDEvent::ReadEvent)
-  {
-    events |= EPOLLIN;
-  }
-  if (m_channel->getEvent() & (int)FDEvent::WriteEvent)
-  {
-    events |= EPOLLOUT;
-  }
-  ev.events = events;
-  int ret = epoll_ctl(m_epfd, op, m_channel->getSocket(), &ev);
-  return ret;
 }

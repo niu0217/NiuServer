@@ -30,6 +30,6 @@ private:
 
 private:
   int m_epfd;
-  struct epoll_event* m_events;
+  struct epoll_event* m_events;  // 事件数组
   const int m_maxNode = 520;
 };

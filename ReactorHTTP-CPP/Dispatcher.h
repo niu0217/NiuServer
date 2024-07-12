@@ -31,5 +31,5 @@ public:
 protected:
   std::string m_name = std::string();
   Channel* m_channel;   // 通过setChannel()设置
-  EventLoop* m_evLoop;
+  EventLoop* m_evLoop;  // 通过构造函数设置
 };
