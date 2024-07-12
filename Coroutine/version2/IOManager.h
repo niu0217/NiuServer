@@ -130,6 +130,8 @@ protected:
   ///            二是关注当前注册的所有IO事件有没有触发，如果有触发，那么应该执行IO事件对应的回调函数
   void idle() override;
 
+  void onTimerInsertedAtFront() override;
+
   /// @brief 重置socket句柄上下文的容器大小
   /// @param size 容量大小
   void contextResize(size_t size);

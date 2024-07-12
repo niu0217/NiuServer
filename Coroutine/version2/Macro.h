@@ -28,8 +28,9 @@
         assert(x); \
     }
 
+
 /// 断言宏封装
-#define SYLAR_ASSERT2(x, w) \
+#define SYLAR_ASSERT2(x, w)  \
     if(SYLAR_UNLIKELY(!(x))) { \
         assert(x); \
     }

@@ -5,6 +5,8 @@
 > Description:   
  ************************************************************************/
 
+#pragma once
+
 #include <memory>
 
 template<class T, class X, int N>

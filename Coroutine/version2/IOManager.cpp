@@ -64,6 +64,43 @@ IOManager::~IOManager()
   }
 }
 
+IOManager::FdContext::EventContext& IOManager::FdContext::getContext(IOManager::Event event)
+{
+  switch(event)
+  {
+  case IOManager::READ:
+    return read;
+  case IOManager::WRITE:
+    return write;
+  default:
+    SYLAR_ASSERT2(false, "getContext");
+  }
+  throw std::invalid_argument("getContext invalid event");
+}
+
+void IOManager::FdContext::resetContext(EventContext& ctx)
+{
+  ctx.scheduler = nullptr;
+  ctx.fiber.reset();
+  ctx.cb = nullptr;
+}
+
+void IOManager::FdContext::triggerEvent(IOManager::Event event)
+{
+  SYLAR_ASSERT(events & event);
+  events = (Event)(events & ~event);
+  EventContext& ctx = getContext(event);
+  if(ctx.cb)
+  {
+    ctx.scheduler->schedule(&ctx.cb);
+  }
+  else
+  {
+    ctx.scheduler->schedule(&ctx.fiber);
+  }
+  ctx.scheduler = nullptr;
+  return;
+}
 
 void IOManager::tickle()
 {
@@ -411,4 +448,14 @@ bool IOManager::cancelAll(int fd)
 
   SYLAR_ASSERT(fd_ctx->events == 0);
   return true;
+}
+
+IOManager* IOManager::GetThis()
+{
+  return dynamic_cast<IOManager*>(Scheduler::GetThis());
+}
+
+void IOManager::onTimerInsertedAtFront()
+{
+  tickle();
 }

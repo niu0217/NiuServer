@@ -14,7 +14,7 @@
 #include <dlfcn.h>
 
 // 当前线程是否启用hook
-static thread_local bool t_hook_enable = false;
+static thread_local bool t_hook_enable = true;
 
 #define HOOK_FUN(XX) \
   XX(sleep) \
@@ -38,6 +38,8 @@ static thread_local bool t_hook_enable = false;
   XX(ioctl) \
   XX(getsockopt) \
   XX(setsockopt)
+
+
 
 void hook_init()
 {
@@ -139,7 +141,6 @@ retry:
 
 extern "C"
 {
-
 #define XX(name) name ## _fun name ## _f = nullptr;
     HOOK_FUN(XX);
 #undef XX

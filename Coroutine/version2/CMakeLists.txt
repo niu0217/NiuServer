@@ -26,13 +26,17 @@ include_directories(${PROJECT_SOURCE_DIR})
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
 set(base_SRCS
- Util.cpp
- Thread.cpp
+ FdManager.cpp
  Fiber.cpp
+ Hook.cpp
+ IOManager.cpp
  Scheduler.cpp
+ Thread.cpp
+ Timer.cpp
+ Util.cpp
  main.cpp
  )
 
  # 编译可执行文件
  add_executable(coroutine ${base_SRCS})
- target_link_libraries(coroutine pthread)
+ target_link_libraries(coroutine pthread dl)

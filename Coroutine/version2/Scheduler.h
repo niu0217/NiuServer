@@ -134,9 +134,9 @@ private:
     int thread;  // 所属的线程
 
     ScheduleTask(Fiber::ptr f, int thr)
+      : fiber(f),
+        thread(thr)
     {
-      fiber = f;
-      thread = thr;
     }
     ScheduleTask(Fiber::ptr *f, int thr)
     {
@@ -146,6 +146,11 @@ private:
     ScheduleTask(std::function<void()> f, int thr)
     {
       cb = f;
+      thread = thr;
+    }
+    ScheduleTask(std::function<void()> *f, int thr)
+    {
+      cb.swap(*f);
       thread = thr;
     }
     ScheduleTask()
