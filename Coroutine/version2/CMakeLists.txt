@@ -37,6 +37,9 @@ set(base_SRCS
  main.cpp
  )
 
- # 编译可执行文件
- add_executable(coroutine ${base_SRCS})
- target_link_libraries(coroutine pthread dl)
+# 添加测试目录
+add_subdirectory(tests)
+
+# 编译可执行文件
+#  add_executable(coroutine ${base_SRCS})
+#  target_link_libraries(coroutine pthread dl)
