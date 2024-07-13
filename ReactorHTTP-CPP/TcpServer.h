@@ -20,9 +20,9 @@ public:
   static int acceptConnection(void* arg);
 
 private:
-  unsigned short m_port;
-  int m_lfd;
-  int m_threadNum;  // 线程池中线程的个数
-  EventLoop* m_mainLoop;  // 主线程的反应堆模型
+  unsigned short m_port;     // 端口号
+  int m_lfd;                 // 监听描述符
+  int m_threadNum;           // 线程池中线程的个数
+  EventLoop* m_mainLoop;     // 主线程的反应堆模型
   ThreadPool* m_threadPool;
 };

@@ -39,7 +39,7 @@ void ThreadPool::run()
     for (int i = 0; i < m_threadNum; ++i)
     {
       WorkerThread* subThread = new WorkerThread(i);
-      subThread->run();
+      subThread->run();  // subThread会阻塞在epoll_wait上等待事件发生
       m_workerThreads.push_back(subThread);
     }
   }

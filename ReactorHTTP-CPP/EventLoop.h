@@ -41,10 +41,21 @@ public:
   /// @param event 发生的事件
   int eventActive(int fd, int event);
 
-  int addTask(Channel* channel, ElemType type); // 添加任务到任务队列
-  int processTaskQ();  // 处理任务队列中的任务
+  /// @brief 添加任务到任务队列m_taskQ
+  /// @param channel 一个封装好fd和回调函数的channel
+  /// @param type 如何处理这个channel
+  int addTask(Channel* channel, ElemType type);
+
+  /// @brief 处理任务队列m_taskQ中的任务
+  int processTaskQ();
+
+  /// @brief 将channel添加到epoll_wait的监听集合中
   int add(Channel* channel);
+
+  /// @brief 将channel从epoll_wait的监听集合中删除
   int remove(Channel* channel);
+
+  /// @brief channel中的事件有变化，更新给从epoll_wait的监听集合
   int modify(Channel* channel);
 
   /// @brief 删除Channel

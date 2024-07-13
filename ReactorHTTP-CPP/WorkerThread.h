@@ -30,10 +30,10 @@ private:
   void running();
 
 private:
-  thread* m_thread;   // 保存线程的实例
+  thread* m_thread;      // 保存线程的实例
   thread::id m_threadID; // ID
-  string m_name;
-  mutex m_mutex;  // 互斥锁
+  string m_name;         // 线程名字
+  mutex m_mutex;         // 互斥锁
   condition_variable m_cond;    // 条件变量
-  EventLoop* m_evLoop;   // 反应堆模型
+  EventLoop* m_evLoop;          // 反应堆模型
 };

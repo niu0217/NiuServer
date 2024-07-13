@@ -34,7 +34,7 @@ EpollDispatcher::~EpollDispatcher()
 int EpollDispatcher::epollCtl(int op)
 {
   struct epoll_event ev;
-  ev.data.fd = m_channel->getSocket();
+  ev.data.fd = m_channel->getSocket();  // m_channel已经通过外部设置进来了
   int events = 0;
   if (m_channel->getEvent() & (int)FDEvent::ReadEvent)
   {

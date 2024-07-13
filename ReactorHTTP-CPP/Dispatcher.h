@@ -16,13 +16,17 @@ class Dispatcher
 {
 public:
   Dispatcher(EventLoop* evloop);
-  virtual ~Dispatcher();  // 必须是虚函数 不然父类指针指向子类对象后，内存释放会有问题
+
+  /// @attention 必须是虚函数 不然父类指针指向子类对象后，内存释放会有问题
+  virtual ~Dispatcher();
 
   virtual int add();
   virtual int remove();
   virtual int modify();
   virtual int dispatch(int timeout = 2); // 单位: s
 
+  /// @brief 将外面的channel设置给m_channel
+  /// @param channel 一个封装好了的channel，需要我们处理这个channel
   inline void setChannel(Channel* channel)
   {
     m_channel = channel;

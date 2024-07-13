@@ -27,7 +27,7 @@ public:
           void* arg);
 
   void writeEventEnable(bool flag); // 修改fd的写事件(检测 or 不检测)
-  bool isWriteEventEnable(); // 判断是否需要检测文件描述符的写事件
+  bool isWriteEventEnable();       // 判断是否需要检测文件描述符的写事件
 
   inline int getEvent() const
   {
