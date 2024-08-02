@@ -45,6 +45,7 @@ void ThreadPool::run()
   }
 }
 
+// 核心
 EventLoop* ThreadPool::takeWorkerEventLoop()
 {
   assert(m_isStart);
